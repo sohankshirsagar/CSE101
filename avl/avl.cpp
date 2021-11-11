@@ -2,7 +2,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#define DEBUG 1
+#define DEBUG 0
 
 using namespace std;
 
@@ -39,7 +39,7 @@ int AVL :: calculateHeight(Node* node) {
   return height;
 }
 
-void AVL :: put(int key) {
+void AVL :: put(string key) {
   bool added;
   // tree is empty
   if (root == NULL) {
@@ -54,7 +54,7 @@ void AVL :: put(int key) {
   }
 }
 
-bool AVL :: put(int key, Node* currentNode, Node* parent, bool leftChild) {
+bool AVL :: put(string key, Node* currentNode, Node* parent, bool leftChild) {
   // find where to insert node with binary search
   // height of new node is set to 0
   // height of intermediate node is set to 1 plus the max odf the left/right node heights
@@ -81,14 +81,16 @@ bool AVL :: put(int key, Node* currentNode, Node* parent, bool leftChild) {
     // key was already there
     currentNode->key = key;
     result = false;
-    cout << "Key already exists " << endl;
+    if (DEBUG) cout << "Key already exists " << currentNode->key << endl;
   }
 
   if (result) {
     currentNode->height = calculateHeight(currentNode);
-    if (DEBUG) cout << "Calling rebalance for: " << currentNode->key << " Height: " << currentNode->height << endl;
-    cout << "------------------------" << endl;
-    print(root);
+    if (DEBUG) {
+      cout << "Calling rebalance for: " << currentNode->key << " Height: " << currentNode->height << endl;
+      cout << "------------------------" << endl;
+      print(root);
+    }
     rebalance(currentNode, parent, leftChild);
   }
   return result;
@@ -134,8 +136,10 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
       if (right > left) {
         // right right heavy
         // rotate left
-        cout << endl;
-        cout << "Right-Right rotating: " << to_string(node->key) << endl << endl;
+        if (DEBUG) {
+          cout << endl;
+          cout << "Right-Right rotating: " << (node->key) << endl << endl;
+        }
         pivot = node->right;
         node->right = node->right->left;
         pivot->left = node;
@@ -145,8 +149,10 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
       } else {
         // right left heavy
         // rotate right, rotate left
-        cout << endl;
-        cout << "Right-Left rotating: " << to_string(node->key) << endl << endl;
+         if (DEBUG) {
+          cout << endl;
+          cout << "Right-Left rotating: " << (node->key) << endl << endl;
+        }
         pivot = node->right->left;
         node->right->left = node->right->left->right;
         pivot->right = node->right;
@@ -180,8 +186,10 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
       if (right < left) {
         // left left heavy
         // rotate right
-        cout << endl;
-        cout << "Left-Left rotating" << to_string(node->key) << endl << endl;
+         if (DEBUG) {
+          cout << endl;
+          cout << "Left-Left rotating: " << (node->key) << endl << endl;
+        }
         pivot = node->left;
         node->left = node->left->right;
         pivot->right = node;
@@ -191,8 +199,10 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
       } else {
         // left right heavy
         // rotate left, rotate right
-        cout << endl;
-        cout << "Left-Right rotating" << to_string(node->key) << endl << endl;
+         if (DEBUG) {
+          cout << endl;
+          cout << "Left-Right rotating: " << (node->key) << endl << endl;
+        }
         pivot = node->left->right;
         node->left->right = node->left->right->left;
         pivot->left = node->left;
@@ -239,12 +249,25 @@ void AVL :: print(Node* node, int depth) {
   for (int i = 0; i < depth; i++) {
     line = line + " ";
   }
-  line = line + to_string(node->key); //", " + to_string(node->height);
+  line = line + node->key + ", " + to_string(node->height);
   cout << line << endl;
   print(node->left, depth + 1);
 }
 
-string AVL :: printInOrder() {
+void AVL :: prePrint() {
+  prePrint(root);
+  cout << endl;
+}
+
+void AVL :: prePrint(Node* currentNode) {
+  if (currentNode != NULL) {
+    cout << currentNode->key << " ";
+    prePrint(currentNode->left);
+    prePrint(currentNode->right);
+  }
+}
+ string AVL :: printInOrder() {
+  cout << "here: " << endl;
   return printInOrder(root);
 }
 string AVL :: printInOrder(Node* start) {
@@ -253,7 +276,7 @@ string AVL :: printInOrder(Node* start) {
   }
   string leftpart = printInOrder(start->left);
   string rightpart = printInOrder(start->right);
-  string output = to_string(start->key);
+  string output = (start->key);
   if (leftpart.length() != 0) {
     output = leftpart + " " + output;
   }
@@ -261,4 +284,37 @@ string AVL :: printInOrder(Node* start) {
     output = output + " " + rightpart;
   }
   return output;
+}
+
+Node* AVL :: get(string key) {
+  return get(key, root);
+}
+
+Node* AVL :: get(string key, Node* currentNode) {
+  if (currentNode == NULL) {
+    return NULL;
+  } else {
+    if (key == currentNode->key) {
+      return currentNode;
+    } else if (key < currentNode->key) {
+      return get(key, currentNode->left);
+    } else {
+      return get(key, currentNode->right);
+    }
+  }
+}
+
+int AVL :: rangeCount(Node* currentNode, string start, string end) {
+  if (currentNode == NULL) {
+    return 0;
+  }
+
+  int leftNum = rangeCount(currentNode->left, start, end);
+  int rightNum = rangeCount(currentNode->right, start, end);
+
+  if (currentNode->key >= start && currentNode->key <= end) {
+    return leftNum + rightNum + 1;
+  } else {
+    return leftNum + rightNum;
+  }
 }

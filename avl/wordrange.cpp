@@ -16,11 +16,16 @@ int main(int argc, char** argv) {
   input.open(argv[1]);
   output.open(argv[2]);
 
+//   string command;
+//   char *com, *dummy, *valstr, *op, *op1;
+//   string val = "";
+
   string command;
-  char *com, *dummy, *valstr, *op;
-  int val = 0;
+  string val;
+  char *com, *op;
 
   AVL myAVL;
+
 
   while (getline(input, command)) {
     if (command.length() == 0) {
@@ -28,18 +33,21 @@ int main(int argc, char** argv) {
     }
     com = strdup(command.c_str());
     op = strtok(com, " \t");
+    val = strtok(NULL, " \t");
 
-    valstr = strtok(NULL, " \t");
-    if (valstr != NULL) {
-      val = strtol(valstr, &dummy, 10);
-    }
-    // put into list
     if (strcmp(op, "i") == 0) {
-      cout << "Put " + to_string(val) << endl;
+      cout << "Insert: " << val << endl;
       myAVL.put(val);
-      // myAVL.print(myAVL.getRoot());
+    }
+
+    if (strcmp(op, "r") == 0) {
+      string val2 = strtok(NULL, " \t");
+      output << myAVL.rangeCount(myAVL.getRoot(), val, val2) << endl;
     }
   }
+  // myAVL.countRange(10,20);
+  // cout << myAVL.rangeCount(myAVL.getRoot(), 10, 99) << endl;
+  // myAVL.print(myAVL.getRoot());
   input.close();
   output.close();
 }
