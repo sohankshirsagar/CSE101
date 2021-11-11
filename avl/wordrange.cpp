@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstring>
 
+
 using namespace std;
 
 int main(int argc, char** argv) {
@@ -32,6 +33,10 @@ int main(int argc, char** argv) {
       continue;
     }
     com = strdup(command.c_str());
+    if (!com) {
+      cout << "Failed to allocate memory" << endl;
+      exit (EXIT_FAILURE);
+    }
     op = strtok(com, " \t");
     val = strtok(NULL, " \t");
 

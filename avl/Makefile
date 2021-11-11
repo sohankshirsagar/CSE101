@@ -12,6 +12,9 @@ avl.o: avl.cpp avl.h
 wordrange.o: avl.cpp avl.h wordrange.cpp
 	$(CXX) -g $(CXXFLAGS) -c wordrange.cpp
 
+run: wordrange
+	./wordrange tree-input.txt sohan-output.txt
+
 clean:
 	rm -f *.o
 	rm wordrange

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <cassert>
 #define DEBUG 0
 
 using namespace std;
@@ -44,6 +45,10 @@ void AVL :: put(string key) {
   // tree is empty
   if (root == NULL) {
     Node* newNode = new Node(key);
+    if (!newNode) {
+        cout << "Failed to allocate memory" << endl;
+        exit (EXIT_FAILURE);
+    }
     root = newNode;
     added = true;
   } else {
@@ -62,6 +67,10 @@ bool AVL :: put(string key, Node* currentNode, Node* parent, bool leftChild) {
   if (key < currentNode->key) {
     if (currentNode->left == NULL) {
       Node* newNode = new Node(key);
+      if (!newNode) {
+          cout << "Failed to allocate memory" << endl;
+          exit (EXIT_FAILURE);
+      }
       currentNode->left = newNode;
       result = true;
     } else {
@@ -71,6 +80,10 @@ bool AVL :: put(string key, Node* currentNode, Node* parent, bool leftChild) {
   } else if (key > currentNode->key) {
     if (currentNode->right == NULL) {
       Node* newNode = new Node(key);
+      if (!newNode) {
+          cout << "Failed to allocate memory" << endl;
+          exit (EXIT_FAILURE);
+      }
       currentNode->right = newNode;
       result = true;
     } else {
@@ -154,6 +167,10 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
           cout << "Right-Left rotating: " << (node->key) << endl << endl;
         }
         pivot = node->right->left;
+        if (!pivot) {
+          cout << "Pivot is null" << endl;
+          exit (EXIT_FAILURE);
+        }
         node->right->left = node->right->left->right;
         pivot->right = node->right;
         node->right = pivot;
@@ -173,6 +190,7 @@ void AVL :: rebalance(Node* node, Node* parent, bool leftChild) {
       // left heavy
       int left;
       int right;
+      assert(node->left);
       if (node->left->left != NULL) {
         left = node->left->left->height + 1;
       } else {

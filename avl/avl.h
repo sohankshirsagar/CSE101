@@ -20,6 +20,7 @@ class Node {
 
     Node(string val) {
       key = val;
+      height = 0;
       left = NULL;
       right = NULL;
     }
